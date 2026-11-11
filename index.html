@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>사나이의 바닷속 자기소개</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Jua 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Jua', sans-serif;
+      background: linear-gradient(180deg, #0f172a 0%, #1e3a8a 35%, #0369a1 70%, #082f49 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* 별명 통통 튀는 애니메이션 */
+    .bounce-nickname {
+      display: inline-block;
+      animation: bounceNickname 1.2s infinite ease-in-out alternate;
+    }
+    @keyframes bounceNickname {
+      0% { transform: translateY(0) scale(1); }
+      100% { transform: translateY(-15px) scale(1.1); }
+    }
+
+    /* 마우스 반짝이 파티클 */
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #7dd3fc;
+      box-shadow: 0 0 10px #38bdf8, 0 0 20px #e0f2fe;
+      animation: sparkleFade 0.8s linear forwards;
+      z-index: 9999;
+    }
+    @keyframes sparkleFade {
+      0% { opacity: 1; transform: scale(1) translateY(0); }
+      100% { opacity: 0; transform: scale(0.2) translateY(15px); }
+    }
+
+    /* 3D 카드 뒤집기 스타일 */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+    .card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* 물방울 애니메이션 */
+    .bubble {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+      animation: floatUp linear infinite;
+      pointer-events: none;
+      z-index: 1;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) scale(0.5); opacity: 0.2; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+    }
+
+    /* 물고기 헤엄 애니메이션 */
+    .fish {
+      position: absolute;
+      font-size: 2.5rem;
+      pointer-events: none;
+      z-index: 2;
+      animation: swimRight linear infinite;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+    .fish-left {
+      animation: swimLeft linear infinite !important;
+    }
+
+    @keyframes swimRight {
+      0% { left: -10%; transform: translateY(0px) scaleX(1); }
+      50% { transform: translateY(-20px) scaleX(1); }
+      100% { left: 110%; transform: translateY(0px) scaleX(1); }
+    }
+    @keyframes swimLeft {
+      0% { right: -10%; transform: translateY(0px) scaleX(-1); }
+      50% { transform: translateY(20px) scaleX(-1); }
+      100% { right: 110%; transform: translateY(0px) scaleX(-1); }
+    }
+
+    /* 파도 일렁임 */
+    .wave {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 1000% 1000% 0 0;
+      position: absolute;
+      width: 200%;
+      height: 120px;
+      bottom: 0;
+      left: -50%;
+      animation: wave 10s infinite linear;
+      z-index: 0;
+    }
+    @keyframes wave {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 폭죽 파티클 */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      pointer-events: none;
+      z-index: 100;
+      animation: confettiFall 2.5s ease-out forwards;
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(80vh) rotate(720deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-between p-4 sm:p-6 min-h-screen">
+
+  <!-- 배경 엘리먼트 -->
+  <div id="bubbles-container"></div>
+  <div id="fishes-container"></div>
+  <div class="wave"></div>
+
+  <!-- 메인 컨테이너 -->
+  <main class="w-full max-w-2xl z-10 my-auto flex flex-col items-center gap-8 py-8">
+    
+    <!-- 1. 헤더 & 별명 애니메이션 -->
+    <header class="text-center space-y-4 bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-white/20 shadow-2xl w-full">
+      <div class="inline-block p-4 bg-cyan-500/20 rounded-full border-2 border-cyan-300/40">
+        <span class="text-6xl sm:text-7xl">🦈</span>
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-sky-100 to-teal-200">
+        안녕하세요! 저는 
+        <span class="bounce-nickname text-yellow-300 underline decoration-wavy decoration-cyan-400">사나이</span>
+        입니다!
+      </h1>
+      <p class="text-base sm:text-lg text-cyan-100 font-medium">
+        🌊 깊은 바닷속처럼 넓은 매력을 가진 사나이의 세계에 오신 것을 환영합니다!
+      </p>
+
+      <!-- 방문자 환영 인사 입력창 -->
+      <div class="mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-2">
+        <input type="text" id="visitor-input" placeholder="이름을 입력하세요!" 
+               class="px-4 py-2 rounded-xl bg-black/30 border border-cyan-300/40 text-white placeholder-cyan-200/50 focus:outline-none focus:ring-2 focus:ring-yellow-300 text-center w-full sm:w-auto">
+        <button onclick="welcomeVisitor()" class="w-full sm:w-auto px-5 py-2 bg-cyan-500 hover:bg-cyan-600 active:scale-95 text-white font-bold rounded-xl transition shadow">
+          인사하기 👋
+        </button>
+      </div>
+      <p id="welcome-message" class="text-yellow-300 font-bold text-lg hidden animate-pulse"></p>
+    </header>
+
+    <!-- 2. 좋아하는 것 3가지 카드 -->
+    <section class="w-full space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-bold text-center text-cyan-200 flex items-center justify-center gap-2">
+        <span>🐠</span> 사나이가 좋아하는 3가지 <span>🐠</span>
+      </h2>
+      <p class="text-center text-sm text-cyan-100/80 mb-2">카드를 눌러 숨겨진 이유를 확인해보세요!</p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <!-- 카드 1: 농구 -->
+        <div class="perspective-1000 h-52 w-full" onclick="flipCard(this)">
+          <div class="card-inner">
+            <div class="card-front bg-gradient-to-br from-orange-500 to-amber-600 border border-orange-300/30">
+              <span class="text-5xl mb-2">🏀</span>
+              <h3 class="text-2xl font-bold text-white">농구</h3>
+              <span class="mt-3 text-xs bg-black/20 px-3 py-1 rounded-full text-orange-100">터치해서 뒤집기 🔄</span>
+            </div>
+            <div class="card-back bg-gradient-to-br from-amber-700 to-orange-900 border border-orange-400/40">
+              <h4 class="text-lg font-bold text-yellow-300 mb-1">좋아하는 이유!</h4>
+              <p class="text-sm sm:text-base text-amber-50 leading-snug">
+                림을 가르는 슛 소리에 스트레스가 싹 날아갑니다! (사실 땀 빼고 밥 맛있게 먹으려고 합니다)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 카드 2: 밥 -->
+        <div class="perspective-1000 h-52 w-full" onclick="flipCard(this)">
+          <div class="card-inner">
+            <div class="card-front bg-gradient-to-br from-emerald-500 to-teal-600 border border-emerald-300/30">
+              <span class="text-5xl mb-2">🍚</span>
+              <h3 class="text-2xl font-bold text-white">밥</h3>
+              <span class="mt-3 text-xs bg-black/20 px-3 py-1 rounded-full text-emerald-100">터치해서 뒤집기 🔄</span>
+            </div>
+            <div class="card-back bg-gradient-to-br from-teal-800 to-emerald-950 border border-emerald-400/40">
+              <h4 class="text-lg font-bold text-yellow-300 mb-1">좋아하는 이유!</h4>
+              <p class="text-sm sm:text-base text-emerald-50 leading-snug">
+                한국 사나이는 밥심! 고기반찬만 있으면 바다도 건널 수 있는 무한 에너지가 솟구칩니다!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 카드 3: 잠 -->
+        <div class="perspective-1000 h-52 w-full" onclick="flipCard(this)">
+          <div class="card-inner">
+            <div class="card-front bg-gradient-to-br from-indigo-500 to-purple-600 border border-indigo-300/30">
+              <span class="text-5xl mb-2">😴</span>
+              <h3 class="text-2xl font-bold text-white">잠</h3>
+              <span class="mt-3 text-xs bg-black/20 px-3 py-1 rounded-full text-indigo-100">터치해서 뒤집기 🔄</span>
+            </div>
+            <div class="card-back bg-gradient-to-br from-purple-800 to-indigo-950 border border-purple-400/40">
+              <h4 class="text-lg font-bold text-yellow-300 mb-1">좋아하는 이유!</h4>
+              <p class="text-sm sm:text-base text-purple-50 leading-snug">
+                베개에 머리만 대면 3초 만에 꿀잠! 꿈속에서는 이미 농구왕이자 바다의 수호자입니다!
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. OX 퀴즈 섹션 -->
+    <section class="w-full bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-xl text-center space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-bold text-cyan-200">
+        ❓ 진실 혹은 거짓! OX 퀴즈
+      </h2>
+      <p class="text-xl sm:text-2xl font-semibold text-white">
+        "나는 멋지다"
+      </p>
+      <div class="flex justify-center gap-6 pt-2">
+        <button onclick="checkQuiz('O')" class="w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 active:scale-95 text-4xl sm:text-5xl font-black rounded-2xl shadow-lg border-2 border-cyan-300 transition flex items-center justify-center">
+          ⭕
+        </button>
+        <button onclick="checkQuiz('X')" class="w-24 h-24 sm:w-28 sm:h-28 bg-gradient-to-br from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 active:scale-95 text-4xl sm:text-5xl font-black rounded-2xl shadow-lg border-2 border-rose-300 transition flex items-center justify-center">
+          ❌
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. 오늘의 점심 메뉴 추천 섹션 (10개 이상) -->
+    <section class="w-full bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-xl text-center space-y-5">
+      <h2 class="text-2xl sm:text-3xl font-bold text-cyan-200 flex items-center justify-center gap-2">
+        <span>🍱</span> 사나이의 점심 메뉴 추천
+      </h2>
+      
+      <div class="bg-black/30 p-5 rounded-2xl border border-cyan-500/30 min-h-[90px] flex items-center justify-center">
+        <p id="menu-display" class="text-xl sm:text-2xl font-bold text-yellow-300">
+          "버튼을 눌러 오늘 점심 메뉴를 정해보세요!"
+        </p>
+      </div>
+
+      <button onclick="recommendLunch()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 active:scale-95 text-slate-900 font-extrabold text-lg rounded-2xl shadow-lg transition">
+        🎲 점심 메뉴 뽑기!
+      </button>
+    </section>
+
+    <!-- 5. 10초 클릭 미니게임 섹션 -->
+    <section class="w-full bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-xl text-center space-y-4">
+      <h2 class="text-2xl sm:text-3xl font-bold text-cyan-200 flex items-center justify-center gap-2">
+        <span>⚡</span> 10초 순발력 테스트 미니게임!
+      </h2>
+      <p class="text-sm text-cyan-100">10초 동안 버튼을 최대한 많이 연타하세요!</p>
+      
+      <div class="flex justify-around items-center bg-black/30 p-4 rounded-2xl border border-cyan-500/30">
+        <div>
+          <span class="text-xs text-cyan-200 block">남은 시간</span>
+          <span id="game-timer" class="text-3xl font-black text-rose-400">10s</span>
+        </div>
+        <div>
+          <span class="text-xs text-cyan-200 block">클릭 수</span>
+          <span id="game-score" class="text-3xl font-black text-yellow-300">0</span>
+        </div>
+      </div>
+
+      <button id="click-btn" onclick="handleGameClick()" class="w-full py-5 bg-gradient-to-r from-teal-400 to-cyan-500 hover:from-teal-500 hover:to-cyan-600 active:scale-95 text-slate-900 font-black text-2xl rounded-2xl shadow-xl transition">
+        🚀 게임 시작하기!
+      </button>
+      <p id="game-result" class="text-lg font-bold text-yellow-200 hidden"></p>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-cyan-200/60 text-sm py-4 z-10">
+    © 사나이의 바닷속 자기소개 페이지 | 🌊 긍정 에너지 100%
+  </footer>
+
+  <!-- OX 퀴즈 모달 -->
+  <div id="quiz-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden p-4">
+    <div class="bg-slate-800 border-2 border-cyan-400 p-6 sm:p-8 rounded-3xl max-w-sm w-full text-center space-y-4 shadow-2xl">
+      <div id="modal-icon" class="text-6xl"></div>
+      <h3 id="modal-title" class="text-2xl font-bold"></h3>
+      <p id="modal-desc" class="text-slate-200 text-base"></p>
+      <button onclick="closeModal()" class="px-6 py-2.5 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-xl transition">
+        확인
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // 1. 마우스 반짝이 효과 (터치 이벤트 대응)
+    function createSparkle(x, y) {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = `${x - 4}px`;
+      sparkle.style.top = `${y - 4}px`;
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 800);
+    }
+
+    window.addEventListener('mousemove', (e) => {
+      if (Math.random() < 0.4) createSparkle(e.clientX, e.clientY);
+    });
+    window.addEventListener('touchmove', (e) => {
+      if (Math.random() < 0.4 && e.touches.length > 0) {
+        createSparkle(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    });
+
+    // 2. 방문자 이름 환영 인사
+    function welcomeVisitor() {
+      const nameInput = document.getElementById('visitor-input');
+      const msg = document.getElementById('welcome-message');
+      const name = nameInput.value.trim();
+
+      if (name) {
+        msg.textContent = `🌊 반가워요, ${name}님! 사나이의 바다에 오신 걸 환영합니다! 🎉`;
+        msg.classList.remove('hidden');
+        nameInput.value = '';
+      } else {
+        msg.textContent = '이름을 먼저 입력해 주세요!';
+        msg.classList.remove('hidden');
+      }
+    }
+
+    // 3. 카드 뒤집기
+    function flipCard(cardElement) {
+      const inner = cardElement.querySelector('.card-inner');
+      inner.classList.toggle('flipped');
+    }
+
+    // 4. OX 퀴즈
+    function checkQuiz(answer) {
+      const modal = document.getElementById('quiz-modal');
+      const icon = document.getElementById('modal-icon');
+      const title = document.getElementById('modal-title');
+      const desc = document.getElementById('modal-desc');
+
+      if (answer === 'O') {
+        icon.textContent = '🎉';
+        title.textContent = '정답입니다!';
+        title.className = 'text-2xl font-bold text-yellow-300';
+        desc.textContent = '역시 사람을 볼 줄 아시네요! 사나이는 언제나 멋집니다!';
+        createConfetti();
+      } else {
+        icon.textContent = '😭';
+        title.textContent = '아쉽네요...';
+        title.className = 'text-2xl font-bold text-rose-400';
+        desc.textContent = '틀렸습니다! 사나이는 존재 자체로 멋지답니다. 다시 풀어보세요!';
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('quiz-modal').classList.add('hidden');
+    }
+
+    function createConfetti() {
+      const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+      for (let i = 0; i < 40; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.top = '-10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.animationDuration = (Math.random() * 1.5 + 1.5) + 's';
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
+
+    // 5. 점심 메뉴 추천 (12가지)
+    const lunchMenus = [
+      "🔥 제육볶음 정식", "돈까스 & 우동 세트", "🍲 차돌 된장찌개",
+      "🍕 고르곤졸라 피자", "🍜 해물 짬뽕", "🍔 수제 치즈버거",
+      "🥩 듬뿍 육회비빔밥", "🍣 신선한 모듬초밥", "🥘 뚝배기 불고기",
+      "🍗 치킨 마요 덮밥", "🍝 베이컨 크림 파스타", "🍛 매콤 카레라이스"
+    ];
+    let lastMenuIndex = -1;
+
+    function recommendLunch() {
+      const display = document.getElementById('menu-display');
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * lunchMenus.length);
+      } while (randomIndex === lastMenuIndex);
+
+      lastMenuIndex = randomIndex;
+
+      display.style.opacity = '0';
+      setTimeout(() => {
+        display.textContent = `👉 오늘의 추천: ${lunchMenus[randomIndex]} 👈`;
+        display.style.opacity = '1';
+      }, 150);
+    }
+
+    // 6. 10초 클릭 미니게임
+    let gameActive = false;
+    let clickCount = 0;
+    let timeLeft = 10;
+    let timerInterval = null;
+
+    function handleGameClick() {
+      const btn = document.getElementById('click-btn');
+      const scoreEl = document.getElementById('game-score');
+      const timerEl = document.getElementById('game-timer');
+      const resultEl = document.getElementById('game-result');
+
+      if (!gameActive) {
+        // 게임 시작
+        gameActive = true;
+        clickCount = 1;
+        timeLeft = 10;
+        scoreEl.textContent = clickCount;
+        timerEl.textContent = `${timeLeft}s`;
+        resultEl.classList.add('hidden');
+        btn.textContent = '🔥 연타하세요! 🔥';
+
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerEl.textContent = `${timeLeft}s`;
+          if (timeLeft <= 0) {
+            endGame();
+          }
+        }, 1000);
+      } else {
+        // 클릭 카운트 증가
+        clickCount++;
+        scoreEl.textContent = clickCount;
+      }
+    }
+
+    function endGame() {
+      clearInterval(timerInterval);
+      gameActive = false;
+      const btn = document.getElementById('click-btn');
+      const resultEl = document.getElementById('game-result');
+
+      btn.textContent = '🔄 다시 도전하기!';
+      let comment = '';
+      if (clickCount >= 60) comment = '🏆 전설의 사나이 손가락! 대단합니다!';
+      else if (clickCount >= 40) comment = '⚡ 엄청난 순발력의 소유자시군요!';
+      else comment = '👍 손가락 풀고 다시 도전해볼까요?';
+
+      resultEl.textContent = `기록: ${clickCount}회 클릭! ${comment}`;
+      resultEl.classList.remove('hidden');
+    }
+
+    // 7. 바다 배경 효과
+    function initOcean() {
+      const bubbleContainer = document.getElementById('bubbles-container');
+      const fishContainer = document.getElementById('fishes-container');
+
+      for (let i = 0; i < 20; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        const size = Math.random() * 25 + 10;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.animationDuration = `${Math.random() * 8 + 4}s`;
+        bubble.style.animationDelay = `${Math.random() * 5}s`;
+        bubbleContainer.appendChild(bubble);
+      }
+
+      const fishEmojis = ['🐠', '🐟', '🐡', '🐬', '🐙', '🦑', '🦈'];
+      for (let i = 0; i < 8; i++) {
+        const fish = document.createElement('div');
+        const isLeft = Math.random() > 0.5;
+        fish.className = `fish ${isLeft ? 'fish-left' : ''}`;
+        fish.textContent = fishEmojis[Math.floor(Math.random() * fishEmojis.length)];
+        fish.style.top = `${Math.random() * 80 + 10}%`;
+        fish.style.animationDuration = `${Math.random() * 12 + 8}s`;
+        fish.style.animationDelay = `${Math.random() * 6}s`;
+        fishContainer.appendChild(fish);
+      }
+    }
+
+    window.onload = function() {
+      initOcean();
+    };
+  </script>
+</body>
+</html>
